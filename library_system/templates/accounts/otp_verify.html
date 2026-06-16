@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP — gen.lib{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block nav %}{% endblock %}
+
+{% block content %}
+<div class="login-page">
+
+  <!-- Background orbs for login page -->
+  <div class="orb orb-hero-1" style="width:500px;height:500px;top:-150px;"></div>
+  <div class="orb orb-hero-2" style="width:300px;height:300px;"></div>
+  <div class="particles"></div>
+
+  <div class="login-card" style="animation: revealUp 0.9s ease 0.2s both; --from-y: 40px;">
+
+    <!-- Header -->
+    <div class="login-header">
+      <a href="/" class="login-logo">gen.lib</a>
+      <div class="login-tagline">Two-Factor Authentication</div>
+    </div>
+
+    <!-- Card -->
+    <div class="glass-card" style="padding:2.5rem;">
+
+      <div style="margin-bottom:2rem;">
+        <h1 style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:0.4rem;letter-spacing:-0.02em;">
+          Verify Your Identity
+        </h1>
+        <p style="font-size:0.875rem;color:var(--text-muted);">
+          We've sent a 6-digit code to your email. Enter it below to sign in.
+        </p>
+      </div>
+
+      {% if error %}
+        <div class="alert alert-error" style="margin-bottom:1.5rem;">
+          <span>⚠</span> {{ error }}
+        </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'accounts:otp_verify' %}" id="otp-form">
+        {% csrf_token %}
+
+        <div class="form-group" style="margin-bottom:2rem;">
+          <label class="form-label" for="id_otp">One-Time Password</label>
+          {{ form.otp }}
+        </div>
+
+        <button type="submit" class="btn-primary w-full" id="otp-submit" style="justify-content:center;width:100%;">
+          Verify OTP →
+        </button>
+      </form>
+    </div>
+
+    <!-- Back to login -->
+    <div style="text-align:center;margin-top:1.5rem;">
+      <a href="{% url 'accounts:login' %}" style="font-size:0.85rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s ease;" 
+         onmouseover="this.style.color='var(--purple-bright)'"
+         onmouseout="this.style.color='var(--text-muted)'">
+        ← Back to Login
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Shake form on error
+  {% if error %}
+    document.addEventListener('DOMContentLoaded', () => {
+      const card = document.querySelector('.glass-card');
+      card.style.animation = 'shake 0.4s ease';
+      const style = document.createElement('style');
+      style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}';
+      document.head.appendChild(style);
+    });
+  {% endif %}
+</script>
+{% endblock %}

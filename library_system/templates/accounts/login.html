@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In — gen.lib{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block nav %}{% endblock %}
+
+{% block content %}
+<div class="login-page">
+
+  <!-- Background orbs for login page -->
+  <div class="orb orb-hero-1" style="width:500px;height:500px;top:-150px;"></div>
+  <div class="orb orb-hero-2" style="width:300px;height:300px;"></div>
+  <div class="particles"></div>
+
+  <div class="login-card" style="animation: revealUp 0.9s ease 2.9s both; --from-y: 40px;">
+
+    <!-- Header -->
+    <div class="login-header">
+      <a href="/" class="login-logo">gen.lib</a>
+      <div class="login-tagline">Knowledge · Curated · Elevated</div>
+    </div>
+
+    <!-- Card -->
+    <div class="glass-card" style="padding:2.5rem;">
+
+      <div style="margin-bottom:2rem;">
+        <h1 style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:0.4rem;letter-spacing:-0.02em;">
+          Welcome Back
+        </h1>
+        <p style="font-size:0.875rem;color:var(--text-muted);">
+          Sign in to access your library dashboard
+        </p>
+      </div>
+
+      {% if error %}
+        <div class="alert alert-error" style="margin-bottom:1.5rem;">
+          <span>⚠</span> {{ error }}
+        </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'accounts:login' %}" id="login-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label" for="id_username">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="id_username"
+            class="form-control"
+            placeholder="Enter your username"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="form-group" style="margin-bottom:2rem;">
+          <label class="form-label" for="id_password">Password</label>
+          <div style="position:relative;">
+            <input
+              type="password"
+              name="password"
+              id="id_password"
+              class="form-control"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+              style="padding-right:3rem;"
+            />
+            <button
+              type="button"
+              id="toggle-pw"
+              style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0;transition:color 0.2s ease;"
+              aria-label="Toggle password visibility"
+            >👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full" id="login-submit" style="justify-content:center;width:100%;">
+          Sign In →
+        </button>
+      </form>
+
+      <div style="margin-top:1.5rem;text-align:center;">
+        <p style="font-size:0.85rem;color:var(--text-secondary);">
+          Don't have an account? 
+          <a href="{% url 'accounts:signup' %}" style="color:var(--purple-bright);text-decoration:none;font-weight:500;transition:color 0.2s ease;"
+             onmouseover="this.style.color='var(--purple-light)'"
+             onmouseout="this.style.color='var(--purple-bright)'">
+            Sign Up
+          </a>
+        </p>
+      </div>
+
+      <!-- Role indicator -->
+      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--glass-border);">
+        <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin-bottom:0.8rem;letter-spacing:0.08em;text-transform:uppercase;">
+          Access Levels
+        </p>
+        <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
+          <span class="badge badge-purple">📚 Librarian — Full Access</span>
+          <span class="badge" style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid var(--glass-border);">🎓 Student — Read Only</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Back to home -->
+    <div style="text-align:center;margin-top:1.5rem;">
+      <a href="/" style="font-size:0.85rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s ease;" 
+         onmouseover="this.style.color='var(--purple-bright)'"
+         onmouseout="this.style.color='var(--text-muted)'">
+        ← Back to gen.lib
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('toggle-pw').addEventListener('click', function () {
+    const pw = document.getElementById('id_password');
+    if (pw.type === 'password') { pw.type = 'text'; this.textContent = '🙈'; }
+    else { pw.type = 'password'; this.textContent = '👁'; }
+  });
+
+  // Shake form on error
+  {% if error %}
+    document.addEventListener('DOMContentLoaded', () => {
+      const card = document.querySelector('.glass-card');
+      card.style.animation = 'shake 0.4s ease';
+      const style = document.createElement('style');
+      style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}';
+      document.head.appendChild(style);
+    });
+  {% endif %}
+</script>
+{% endblock %}

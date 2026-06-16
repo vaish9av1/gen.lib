@@ -1,0 +1,102 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Members{% endblock %}
+{% block nav_students %}active{% endblock %}
+
+{% block content %}
+<div class="admin-header reveal">
+  <div>
+    <h1 class="admin-page-title">Library Members</h1>
+    <p style="font-size:0.875rem;color:rgba(248,113,113,0.5);margin-top:0.25rem;">
+      Manage all registered students and library members
+    </p>
+  </div>
+  <a href="{% url 'students:student_create' %}" class="btn-primary" id="add-member-btn" style="background:linear-gradient(135deg,#8b0000,#dc2626);box-shadow:0 4px 24px rgba(220,38,38,0.4);">
+    <span>➕</span> Add Member
+  </a>
+</div>
+
+<!-- Stats -->
+<div class="admin-stats-grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">👥</div>
+    <div class="admin-stat-num" data-count="{{ students|length }}" data-suffix="">0</div>
+    <div class="admin-stat-label">Total Members</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">🎓</div>
+    <div class="admin-stat-num">Active</div>
+    <div class="admin-stat-label">Status</div>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="glass-card reveal" style="padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;border-color:rgba(248,113,113,0.12);">
+  <span style="font-size:1.1rem;color:rgba(248,113,113,0.5);">🔍</span>
+  <input
+    type="text"
+    id="member-search"
+    placeholder="Search by name, email or phone..."
+    class="form-control"
+    style="border:none;background:transparent;padding:0.4rem 0;font-size:0.95rem;box-shadow:none;"
+  />
+</div>
+
+<!-- Table -->
+<div class="glass-card reveal" style="padding:0;overflow:hidden;border-color:rgba(248,113,113,0.12);">
+  <div class="table-wrap">
+    <table class="data-table" id="members-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr class="member-row" data-search="{{ student.name|lower }} {{ student.email|lower }} {{ student.phone }}">
+          <td style="color:rgba(248,113,113,0.4);font-size:0.8rem;">{{ forloop.counter }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:0.8rem;">
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b0000,#dc2626);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:white;flex-shrink:0;">
+                {{ student.name|first|upper }}
+              </div>
+              <span style="font-weight:500;color:var(--text-primary);">{{ student.name }}</span>
+            </div>
+          </td>
+          <td style="color:var(--text-secondary);">{{ student.email }}</td>
+          <td style="color:var(--text-secondary);">{{ student.phone }}</td>
+          <td><span class="badge badge-green">● Active</span></td>
+          <td>
+            <a href="{% url 'students:student_update' student.pk %}" class="btn-ghost" style="padding:0.3rem 0.6rem;font-size:0.8rem;border-color:rgba(248,113,113,0.3);color:#fecaca;">
+              ✏️ Edit
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center;padding:4rem;color:rgba(248,113,113,0.3);">
+            <div style="font-size:2rem;margin-bottom:0.8rem;">👤</div>
+            <div style="font-size:0.9rem;">No members registered yet.</div>
+            <a href="{% url 'students:student_create' %}" style="color:#f87171;text-decoration:none;font-size:0.85rem;margin-top:0.5rem;display:inline-block;">Register first member →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+document.getElementById('member-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.member-row').forEach(row => {
+    row.style.display = (row.dataset.search || '').includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}gen.lib — Where Knowledge Lives{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
+<section class="hero">
+  <!-- Orbs -->
+  <div class="orb orb-hero-1" data-parallax="0.15"></div>
+  <div class="orb orb-hero-2" data-parallax="0.25"></div>
+  <div class="orb orb-hero-3" data-parallax="0.1"></div>
+
+  <!-- Grid bg -->
+  <div class="hero-bg-grid"></div>
+
+  <!-- Particles -->
+  <div class="particles"></div>
+
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        Premium Library System
+      </div>
+
+      <h1 class="hero-title">
+        <span class="word-gradient">Smart</span><br />
+        <span class="word-italic">Library</span>
+        <span class="word-gradient"> Management</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        gen.lib is a next-generation library management platform — 
+        crafted for institutions that value knowledge as much as aesthetics.
+      </p>
+
+      <div class="hero-actions">
+        <a href="{% url 'books:book_browse' %}" class="btn-primary" id="hero-cta-primary">
+          <span>📚</span> Explore Catalogue
+        </a>
+        <a href="{% url 'accounts:login' %}" class="btn-ghost" id="hero-cta-ghost">
+          <span>→</span> Sign In
+        </a>
+      </div>
+    </div>
+
+    <!-- Animated Book Scene -->
+    <div class="book-scene" id="book-scene">
+      <div class="bookshelf">
+        <div class="books-row" id="books-row"></div>
+        <div class="shelf-board"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── DIVIDER ─────────────────────────────────────────────────── -->
+<div class="container"><div class="gradient-divider"></div></div>
+
+{% comment %} <!-- ── STATS ──────────────────────────────────────────────────── -->
+<section class="section" style="padding-top:4rem;padding-bottom:4rem;">
+  <div class="container">
+    <div class="stats-row stagger reveal">
+      <div class="glass-card stat-card">
+        <div class="stat-number" data-count="10000" data-suffix="+">0</div>
+        <div class="stat-label">Books in Catalogue</div>
+      </div>
+      <div class="glass-card stat-card">
+        <div class="stat-number" data-count="2400" data-suffix="+">0</div>
+        <div class="stat-label">Active Members</div>
+      </div>
+      <div class="glass-card stat-card">
+        <div class="stat-number" data-count="580" data-suffix="+">0</div>
+        <div class="stat-label">Books Issued Today</div>
+      </div>
+      <div class="glass-card stat-card">
+        <div class="stat-number" data-count="99" data-suffix="%">0</div>
+        <div class="stat-label">Return Rate</div>
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+<!-- ── FEATURES ────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">
+        <div class="section-label-line"></div>
+        <span class="section-label-text">Core Features</span>
+      </div>
+      <h2 class="section-title">
+        Built for Modern<br /><span class="grad">Libraries</span>
+      </h2>
+      <p class="section-desc">
+        Every feature is designed with elegance in mind — from catalogue management 
+        to student onboarding and transaction tracking.
+      </p>
+    </div>
+
+    <div class="features-grid stagger">
+      <div class="glass-card reveal">
+        <div class="card-icon">📖</div>
+        <div class="card-title">Smart Catalogue</div>
+        <div class="card-desc">Manage thousands of books with real-time availability tracking, advanced search, and instant ISBN lookups.</div>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">👥</div>
+        <div class="card-title">Member Management</div>
+        <div class="card-desc">Onboard students and manage member profiles with role-based access, contact info, and activity history.</div>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Seamless Transactions</div>
+        <div class="card-desc">Issue and return books in seconds. Automatic quantity management with a 14-day return window policy.</div>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">🔐</div>
+        <div class="card-title">Role-Based Access</div>
+        <div class="card-desc">Librarians get full management powers. Students see a clean, focused view. Security without compromise.</div>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Real-Time Updates</div>
+        <div class="card-desc">Stock levels, transaction logs, and member data sync instantly across all management screens.</div>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">✨</div>
+        <div class="card-title">Premium Experience</div>
+        <div class="card-desc">Every interaction is polished. From cinematic animations to glassy interfaces — built to impress.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DIVIDER ─────────────────────────────────────────────────── -->
+<div class="container"><div class="gradient-divider"></div></div>
+
+<!-- ── CTA BANNER ─────────────────────────────────────────────── -->
+<section class="section" style="text-align:center;">
+  <div class="container">
+    <div class="reveal-scale">
+      <div class="glass-card" style="max-width:700px;margin:0 auto;padding:4rem 3rem;position:relative;overflow:hidden;">
+        <!-- Background glow inside card -->
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(91,0,153,0.2) 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="position:relative;z-index:1;">
+          <div class="hero-eyebrow" style="margin:0 auto 1.5rem;display:inline-flex;">
+            🎓 For Librarians
+          </div>
+          <h2 class="section-title" style="margin-bottom:1rem;">
+            Ready to <span class="grad">Manage</span><br />Your Library?
+          </h2>
+          <p class="section-desc" style="margin:0 auto 2.5rem;">
+            Sign in with your librarian credentials to access the full management dashboard — books, members, and transactions.
+          </p>
+          <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+            <a href="{% url 'accounts:login' %}" class="btn-primary" id="cta-signin">
+              <span>🔑</span> Librarian Sign In
+            </a>
+            <a href="{% url 'books:book_browse' %}" class="btn-ghost" id="cta-catalogue">
+              View Catalogue →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

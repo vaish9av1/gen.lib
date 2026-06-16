@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Success - Checkout{% endblock %}
+
+{% block nav %}
+  <nav class="nav" id="main-nav">
+    <div class="container nav-inner">
+      <a href="{% url 'home' %}" class="nav-logo">gen.lib</a>
+      <ul class="nav-links">
+        <li><a href="{% url 'books:book_browse' %}">Browse Books</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'accounts:logout' %}" class="nav-cta">Sign Out</a></li>
+        {% else %}
+          <li><a href="{% url 'accounts:login' %}" class="nav-cta">Sign In</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 8rem 0; display:flex; justify-content:center;">
+  <div class="glass-card reveal" style="max-width:500px; width:100%; padding:3rem; text-align:center;">
+    
+    <div style="font-size:4rem; margin-bottom:1rem;">🎉</div>
+    <h1 style="font-family:'Playfair Display', serif; font-size:2rem; color:#fff; margin-bottom:1rem;">Checkout Successful</h1>
+    <p style="color:rgba(255,255,255,0.7); margin-bottom:2rem; line-height:1.6;">
+      You have successfully borrowed <strong>{{ book.title }}</strong>.<br>
+      It is due back in 14 days. Happy reading!
+    </p>
+
+    <a href="{% url 'books:book_browse' %}" class="btn-primary" style="justify-content:center;">Browse More Books</a>
+    
+  </div>
+</div>
+{% endblock %}

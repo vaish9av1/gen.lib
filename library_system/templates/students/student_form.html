@@ -1,0 +1,136 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Register Member{% endblock %}
+{% block nav_students_add %}active{% endblock %}
+
+{% block content %}
+<div class="admin-header reveal">
+  <div>
+    <h1 class="admin-page-title">Register New Member</h1>
+    <p style="font-size:0.875rem;color:rgba(248,113,113,0.5);margin-top:0.25rem;">
+      Add a new student to the library system
+    </p>
+  </div>
+  <a href="{% url 'students:student_list' %}" class="btn-ghost" style="border-color:rgba(248,113,113,0.2);color:#fecaca;">
+    ← All Members
+  </a>
+</div>
+
+<div style="max-width:680px;">
+  <div class="glass-card reveal" style="border-color:rgba(248,113,113,0.12);">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(248,113,113,0.1);">
+      <div class="card-icon" style="background:rgba(220,38,38,0.07);border-color:rgba(248,113,113,0.2);font-size:1.3rem;margin-bottom:0;">👤</div>
+      <div>
+        <div style="font-weight:600;color:#fecaca;font-size:1rem;">New Member Registration</div>
+        <div style="font-size:0.8rem;color:rgba(248,113,113,0.5);">Creates both a student profile and login account</div>
+      </div>
+    </div>
+
+    <form method="POST" action="{% url 'students:student_create' %}" id="member-form">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" style="margin-bottom:1.5rem;">
+          {% for error in form.non_field_errors %}<span>⚠ {{ error }}</span>{% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Section: Profile Info -->
+      <p style="font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:rgba(248,113,113,0.5);margin-bottom:1rem;">
+        Profile Information
+      </p>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.name.id_for_label }}">Full Name</label>
+        <input type="text" name="{{ form.name.html_name }}" id="{{ form.name.id_for_label }}"
+          class="form-control" placeholder="Student's full name"
+          value="{{ form.name.value|default:'' }}" />
+        {% if form.name.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.name.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label" for="{{ form.email.id_for_label }}">Email Address</label>
+          <input type="email" name="{{ form.email.html_name }}" id="{{ form.email.id_for_label }}"
+            class="form-control" placeholder="example@college.com"
+            value="{{ form.email.value|default:'' }}" />
+          {% if form.email.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.email.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.phone.id_for_label }}">Phone Number</label>
+          <input type="text" name="{{ form.phone.html_name }}" id="{{ form.phone.id_for_label }}"
+            class="form-control" placeholder="Primary contact number"
+            value="{{ form.phone.value|default:'' }}" />
+          {% if form.phone.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.phone.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:rgba(248,113,113,0.08);margin:1.5rem 0;"></div>
+
+      <!-- Section: Login Account -->
+      <p style="font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:rgba(248,113,113,0.5);margin-bottom:1rem;">
+        Login Credentials
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+          <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}"
+            class="form-control" placeholder="Unique login username"
+            value="{{ form.username.value|default:'' }}" autocomplete="off" />
+          {% if form.username.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.username.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+          <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}"
+            class="form-control" placeholder="Secure password"
+            autocomplete="new-password" />
+          {% if form.password.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.password.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:rgba(248,113,113,0.08);margin:1.5rem 0;"></div>
+
+      <!-- Optional -->
+      <p style="font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:rgba(248,113,113,0.5);margin-bottom:1rem;">
+        Optional Details
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label" for="{{ form.phone_number.id_for_label }}">Alt. Phone</label>
+          <input type="text" name="{{ form.phone_number.html_name }}" id="{{ form.phone_number.id_for_label }}"
+            class="form-control" placeholder="Alternate phone (optional)"
+            value="{{ form.phone_number.value|default:'' }}" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.sex.id_for_label }}">Gender</label>
+          <select name="{{ form.sex.html_name }}" id="{{ form.sex.id_for_label }}" class="form-control">
+            <option value="">Select Gender</option>
+            <option value="Male"   {% if form.sex.value == 'Male'   %}selected{% endif %}>Male</option>
+            <option value="Female" {% if form.sex.value == 'Female' %}selected{% endif %}>Female</option>
+            <option value="Other"  {% if form.sex.value == 'Other'  %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:1rem;">
+        <button type="submit" class="btn-primary" id="member-submit"
+          style="background:linear-gradient(135deg,#8b0000,#dc2626);box-shadow:0 4px 24px rgba(220,38,38,0.4);flex:1;justify-content:center;">
+          ✅ Register Member
+        </button>
+        <a href="{% url 'students:student_list' %}" class="btn-ghost" style="border-color:rgba(248,113,113,0.2);color:#fecaca;">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

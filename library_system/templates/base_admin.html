@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="gen.lib Admin — Library Management Dashboard" />
+  <title>{% block title %}gen.lib Admin{% endblock %} — gen.lib</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{% static 'css/genlib.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/admin-theme.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="admin-body">
+
+  <!-- ── LOADING SCREEN ────────────────────────────────────────── -->
+  <div id="loading-screen">
+    <div class="loader-orbs">
+      <div class="loader-orb" style="background:radial-gradient(circle,rgba(220,38,38,0.3),transparent)"></div>
+      <div class="loader-orb" style="background:radial-gradient(circle,rgba(139,0,0,0.25),transparent)"></div>
+    </div>
+    <div class="loader-logo">gen.lib</div>
+    <div class="loader-tagline">Admin Dashboard</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ── BACKGROUND ───────────────────────────────────────────── -->
+  <div class="bg-canvas"></div>
+  <div class="noise-overlay"></div>
+  <div class="cursor-glow" style="background:radial-gradient(circle,rgba(220,38,38,0.08) 0%,transparent 70%)"></div>
+
+  <!-- ── ADMIN LAYOUT ──────────────────────────────────────────── -->
+  <div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <a href="{% url 'home' %}" class="sidebar-logo">gen.lib</a>
+
+      <div class="admin-badge" style="margin:0 1rem 1.5rem;">Admin Panel</div>
+
+      <span class="sidebar-section-title">Catalogue</span>
+      <a href="{% url 'books:book_list' %}" class="sidebar-link {% block nav_books %}{% endblock %}">
+        <span class="sidebar-link-icon">📚</span> Books
+      </a>
+      <a href="{% url 'books:book_add' %}" class="sidebar-link {% block nav_books_add %}{% endblock %}">
+        <span class="sidebar-link-icon">➕</span> Add Book
+      </a>
+
+      <span class="sidebar-section-title">Members</span>
+      <a href="{% url 'students:student_list' %}" class="sidebar-link {% block nav_students %}{% endblock %}">
+        <span class="sidebar-link-icon">👥</span> All Members
+      </a>
+      <a href="{% url 'students:student_create' %}" class="sidebar-link {% block nav_students_add %}{% endblock %}">
+        <span class="sidebar-link-icon">➕</span> Add Member
+      </a>
+
+      <span class="sidebar-section-title">Transactions</span>
+      <a href="{% url 'transactions:issue_list' %}" class="sidebar-link {% block nav_issues %}{% endblock %}">
+        <span class="sidebar-link-icon">📋</span> Issued Books
+      </a>
+
+      <span class="sidebar-section-title">System</span>
+      <a href="/admin/" class="sidebar-link">
+        <span class="sidebar-link-icon">⚙️</span> Django Admin
+      </a>
+      <a href="{% url 'accounts:logout' %}" class="sidebar-link">
+        <span class="sidebar-link-icon">🚪</span> Sign Out
+      </a>
+
+      <!-- User info -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">
+            {{ user.username|first|upper }}
+          </div>
+          <div>
+            <div class="sidebar-username">{{ user.username }}</div>
+            <div class="sidebar-role">Librarian</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main page-wrapper scroll-container">
+      {% if messages %}
+      <div class="messages-list" style="margin-bottom:1.5rem;">
+        {% for message in messages %}
+          <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+            <span>{% if message.tags == 'error' %}⚠{% elif message.tags == 'success' %}✓{% else %}ℹ{% endif %}</span>
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+
+      <footer style="margin-top:4rem;padding-top:1.5rem;border-top:1px solid rgba(248,113,113,0.08);text-align:center;">
+        <p style="font-size:0.78rem;color:rgba(248,113,113,0.3);">gen.lib Admin Panel · Built with elegance</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="{% static 'js/genlib.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

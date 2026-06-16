@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account — gen.lib{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block nav %}{% endblock %}
+
+{% block content %}
+<div class="login-page">
+
+  <!-- Background orbs for signup page -->
+  <div class="orb orb-hero-1" style="width:500px;height:500px;top:-150px;"></div>
+  <div class="orb orb-hero-2" style="width:300px;height:300px;"></div>
+  <div class="particles"></div>
+
+  <div class="login-card" style="animation: revealUp 0.9s ease both; --from-y: 40px; max-width: 500px;">
+
+    <!-- Header -->
+    <div class="login-header">
+      <a href="/" class="login-logo">gen.lib</a>
+      <div class="login-tagline">Knowledge · Curated · Elevated</div>
+    </div>
+
+    <!-- Card -->
+    <div class="glass-card" style="padding:2.5rem;">
+
+      <div style="margin-bottom:2rem;">
+        <h1 style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:0.4rem;letter-spacing:-0.02em;">
+          Create your account
+        </h1>
+        <p style="font-size:0.875rem;color:var(--text-muted);">
+          Register to explore and borrow books with elegance
+        </p>
+      </div>
+
+      {% if form.errors %}
+        <div class="alert alert-error" style="margin-bottom:1.5rem; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
+          <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600;">
+            <span>⚠</span> Please correct the errors below
+          </div>
+          <ul style="margin-left: 1.5rem; font-size: 0.8rem; list-style-type: disc;">
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li>{{ field.label }}: {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'accounts:signup' %}" id="signup-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label" for="id_username">Username</label>
+          {{ form.username }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_name">Full Name</label>
+          {{ form.name }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_email">Email Address</label>
+          {{ form.email }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_phone">Phone Number</label>
+          {{ form.phone }}
+        </div>
+
+        <div class="form-group" style="margin-bottom:2.5rem;">
+          <label class="form-label" for="id_password">Password</label>
+          <div style="position:relative;">
+            <input
+              type="password"
+              name="password"
+              id="id_password"
+              class="form-control"
+              placeholder="Create a password"
+              required
+              style="padding-right:3rem;"
+            />
+            <button
+              type="button"
+              id="toggle-pw"
+              style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0;transition:color 0.2s ease;"
+              aria-label="Toggle password visibility"
+            >👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full" id="signup-submit" style="justify-content:center;width:100%;">
+          Sign Up →
+        </button>
+      </form>
+
+      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--glass-border);text-align:center;">
+        <p style="font-size:0.85rem;color:var(--text-secondary);">
+          Already have an account? 
+          <a href="{% url 'accounts:login' %}" style="color:var(--purple-bright);text-decoration:none;font-weight:500;transition:color 0.2s ease;"
+             onmouseover="this.style.color='var(--purple-light)'"
+             onmouseout="this.style.color='var(--purple-bright)'">
+            Sign In
+          </a>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Back to home -->
+    <div style="text-align:center;margin-top:1.5rem;">
+      <a href="/" style="font-size:0.85rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s ease;" 
+         onmouseover="this.style.color='var(--purple-bright)'"
+         onmouseout="this.style.color='var(--text-muted)'">
+        ← Back to gen.lib
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('toggle-pw').addEventListener('click', function () {
+    const pw = document.getElementById('id_password');
+    if (pw.type === 'password') { pw.type = 'text'; this.textContent = '🙈'; }
+    else { pw.type = 'password'; this.textContent = '👁'; }
+  });
+
+  // Shake form on validation errors
+  {% if form.errors %}
+    document.addEventListener('DOMContentLoaded', () => {
+      const card = document.querySelector('.glass-card');
+      card.style.animation = 'shake 0.4s ease';
+      const style = document.createElement('style');
+      style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}';
+      document.head.appendChild(style);
+    });
+  {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Delete Book{% endblock %}
+{% block nav_books %}active{% endblock %}
+
+{% block content %}
+<div class="admin-header reveal">
+  <div>
+    <h1 class="admin-page-title">Delete Book</h1>
+    <p style="font-size:0.875rem;color:rgba(248,113,113,0.5);margin-top:0.25rem;">
+      This action is permanent and cannot be undone
+    </p>
+  </div>
+  <a href="{% url 'books:book_list' %}" class="btn-ghost" style="border-color:rgba(248,113,113,0.2);color:#fecaca;">
+    ← Cancel
+  </a>
+</div>
+
+<div style="max-width:520px;">
+  <div class="glass-card reveal" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.04);">
+
+    <!-- Warning Icon -->
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="font-size:3rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(239,68,68,0.4));">⚠️</div>
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;color:#fecaca;margin-bottom:0.5rem;letter-spacing:-0.02em;">
+        Confirm Deletion
+      </h2>
+      <p style="font-size:0.9rem;color:rgba(248,113,113,0.6);">
+        You are about to permanently remove this book from the catalogue.
+      </p>
+    </div>
+
+    <!-- Book Info -->
+    <div style="background:rgba(220,38,38,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:12px;padding:1.2rem;margin-bottom:2rem;">
+      <div style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(248,113,113,0.5);margin-bottom:0.6rem;">
+        Book to be deleted
+      </div>
+      <div style="font-weight:600;color:#fecaca;font-size:1rem;margin-bottom:0.3rem;">{{ object.title }}</div>
+      <div style="font-size:0.875rem;color:rgba(248,113,113,0.6);">by {{ object.author }}</div>
+      <div style="margin-top:0.6rem;display:flex;gap:0.8rem;">
+        <span class="badge" style="background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.7);border:1px solid rgba(248,113,113,0.15);font-size:0.72rem;">
+          ISBN: {{ object.isbn }}
+        </span>
+        <span class="badge" style="background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.7);border:1px solid rgba(248,113,113,0.15);font-size:0.72rem;">
+          {{ object.quantity }} copies
+        </span>
+      </div>
+    </div>
+
+    <!-- Confirm Form -->
+    <form method="POST" id="delete-form">
+      {% csrf_token %}
+      <div style="display:flex;gap:0.8rem;">
+        <button
+          type="submit"
+          id="confirm-delete-btn"
+          style="flex:1;padding:0.9rem;background:linear-gradient(135deg,#7f1d1d,#dc2626);border:none;border-radius:8px;color:white;font-family:var(--font-body);font-weight:600;font-size:0.95rem;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(220,38,38,0.35);"
+          onmouseover="this.style.boxShadow='0 6px 30px rgba(220,38,38,0.55)';this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.boxShadow='0 4px 20px rgba(220,38,38,0.35)';this.style.transform=''"
+        >
+          🗑 Yes, Delete Permanently
+        </button>
+        <a href="{% url 'books:book_list' %}" class="btn-ghost" style="border-color:rgba(248,113,113,0.2);color:#fecaca;text-decoration:none;display:flex;align-items:center;padding:0.9rem 1.5rem;">
+          Keep It
+        </a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

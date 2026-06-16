@@ -1,0 +1,132 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Book Catalogue{% endblock %}
+{% block nav_books %}active{% endblock %}
+
+{% block content %}
+<div class="admin-header reveal">
+  <div>
+    <h1 class="admin-page-title">Book Catalogue</h1>
+    <p style="font-size:0.875rem;color:rgba(248,113,113,0.5);margin-top:0.25rem;">
+      {{ books|length }} book{{ books|length|pluralize }} in the library
+    </p>
+  </div>
+  <a href="{% url 'books:book_add' %}" class="btn-primary" id="add-book-btn" style="background:linear-gradient(135deg,#8b0000,#dc2626);box-shadow:0 4px 24px rgba(220,38,38,0.4);">
+    <span>➕</span> Add Book
+  </a>
+</div>
+
+<!-- Quick Stats -->
+<div class="admin-stats-grid reveal">
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">📚</div>
+    <div class="admin-stat-num" data-count="{{ books|length }}" data-suffix="">0</div>
+    <div class="admin-stat-label">Total Titles</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">✅</div>
+    <div class="admin-stat-num" id="avail-count">—</div>
+    <div class="admin-stat-label">Available Now</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">📤</div>
+    <div class="admin-stat-num" id="issued-count">—</div>
+    <div class="admin-stat-label">Currently Issued</div>
+  </div>
+</div>
+
+<!-- Search Bar -->
+<div class="glass-card reveal" style="padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;">
+  <span style="font-size:1.1rem;color:rgba(248,113,113,0.5);">🔍</span>
+  <input
+    type="text"
+    id="book-search"
+    placeholder="Search by title, author, or ISBN..."
+    class="form-control"
+    style="border:none;background:transparent;padding:0.4rem 0;font-size:0.95rem;box-shadow:none;"
+  />
+</div>
+
+<!-- Books Table -->
+<div class="glass-card reveal" style="padding:0;overflow:hidden;">
+  <div class="table-wrap">
+    <table class="data-table" id="books-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>ISBN</th>
+          <th>Total</th>
+          <th>Available</th>
+          <th>Status</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr class="book-row" data-search="{{ book.title|lower }} {{ book.author|lower }} {{ book.isbn }}">
+          <td style="color:rgba(248,113,113,0.4);font-size:0.8rem;">{{ forloop.counter }}</td>
+          <td>
+            <div style="font-weight:500;color:var(--text-primary);font-size:0.95rem;">{{ book.title }}</div>
+          </td>
+          <td style="color:var(--text-secondary);">{{ book.author }}</td>
+          <td>
+            <code style="font-size:0.8rem;background:rgba(248,113,113,0.06);padding:0.2rem 0.6rem;border-radius:4px;color:rgba(248,113,113,0.7);border:1px solid rgba(248,113,113,0.12);">
+              {{ book.isbn }}
+            </code>
+          </td>
+          <td style="color:var(--text-secondary);">{{ book.quantity }}</td>
+          <td style="color:var(--text-secondary);">{{ book.available_quantity }}</td>
+          <td>
+            {% if book.available_quantity > 0 %}
+              <span class="badge badge-green">● Available</span>
+            {% else %}
+              <span class="badge badge-red">● Issued Out</span>
+            {% endif %}
+          </td>
+          <td style="text-align:right;">
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+              <a href="{% url 'books:book_edit' book.pk %}" class="action-btn action-btn-edit" id="edit-book-{{ book.pk }}">✏ Edit</a>
+              <a href="{% url 'books:book_delete' book.pk %}" class="action-btn action-btn-del" id="delete-book-{{ book.pk }}">🗑 Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align:center;padding:4rem;color:rgba(248,113,113,0.3);">
+            <div style="font-size:2rem;margin-bottom:0.8rem;">📭</div>
+            <div style="font-size:0.9rem;">No books in the catalogue yet.</div>
+            <a href="{% url 'books:book_add' %}" style="color:#f87171;text-decoration:none;font-size:0.85rem;margin-top:0.5rem;display:inline-block;">Add your first book →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Live search filter
+document.getElementById('book-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.book-row').forEach(row => {
+    const text = row.dataset.search || '';
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+});
+
+// Compute available/issued stats
+document.addEventListener('DOMContentLoaded', () => {
+  let totalAvail = 0, totalIssued = 0;
+  {% for book in books %}
+    totalAvail  += {{ book.available_quantity }};
+    totalIssued += {{ book.quantity }} - {{ book.available_quantity }};
+  {% endfor %}
+  const ac = document.getElementById('avail-count');
+  const ic = document.getElementById('issued-count');
+  if(ac) ac.textContent = totalAvail;
+  if(ic) ic.textContent = totalIssued;
+});
+</script>
+{% endblock %}

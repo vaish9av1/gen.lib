@@ -1,0 +1,77 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Edit Member{% endblock %}
+{% block nav_students %}active{% endblock %}
+
+{% block content %}
+<div class="admin-header reveal">
+  <div>
+    <h1 class="admin-page-title">Edit Member Profile</h1>
+    <p style="font-size:0.875rem;color:rgba(248,113,113,0.5);margin-top:0.25rem;">
+      Update details for {{ student.name }}
+    </p>
+  </div>
+  <a href="{% url 'students:student_list' %}" class="btn-ghost" style="border-color:rgba(248,113,113,0.2);color:#fecaca;">
+    ← All Members
+  </a>
+</div>
+
+<div style="max-width:680px;">
+  <div class="glass-card reveal" style="border-color:rgba(248,113,113,0.12);">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(248,113,113,0.1);">
+      <div class="card-icon" style="background:rgba(220,38,38,0.07);border-color:rgba(248,113,113,0.2);font-size:1.3rem;margin-bottom:0;">✏️</div>
+      <div>
+        <div style="font-weight:600;color:#fecaca;font-size:1rem;">Member Update</div>
+        <div style="font-size:0.8rem;color:rgba(248,113,113,0.5);">Modifying profile and contact information</div>
+      </div>
+    </div>
+
+    <form method="POST" action="{% url 'students:student_update' student.pk %}" id="member-form">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" style="margin-bottom:1.5rem;">
+          {% for error in form.non_field_errors %}<span>⚠ {{ error }}</span>{% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Section: Profile Info -->
+      <p style="font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:rgba(248,113,113,0.5);margin-bottom:1rem;">
+        Profile Information
+      </p>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.name.id_for_label }}">Full Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.name.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label" for="{{ form.email.id_for_label }}">Email Address</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.email.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.phone.id_for_label }}">Phone Number</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}<p style="font-size:0.8rem;color:#fca5a5;margin-top:0.3rem;">{{ form.phone.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:2rem;">
+        <button type="submit" class="btn-primary" id="member-submit"
+          style="background:linear-gradient(135deg,#8b0000,#dc2626);box-shadow:0 4px 24px rgba(220,38,38,0.4);flex:1;justify-content:center;">
+          💾 Save Changes
+        </button>
+        <a href="{% url 'students:student_list' %}" class="btn-ghost" style="border-color:rgba(248,113,113,0.2);color:#fecaca;">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

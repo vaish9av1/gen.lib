@@ -1,0 +1,134 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Book Issues Log{% endblock %}
+{% block nav_issues %}active{% endblock %}
+
+{% block content %}
+<div class="admin-header reveal">
+  <div>
+    <h1 class="admin-page-title">Book Issues Log</h1>
+    <p style="font-size:0.875rem;color:rgba(248,113,113,0.5);margin-top:0.25rem;">
+      {{ issues|length }} transaction{{ issues|length|pluralize }} recorded in the system
+    </p>
+  </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="admin-stats-grid reveal">
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">📋</div>
+    <div class="admin-stat-num" data-count="{{ issues|length }}" data-suffix="">0</div>
+    <div class="admin-stat-label">Total Transactions</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">⏳</div>
+    <div class="admin-stat-num" id="active-issues-count">—</div>
+    <div class="admin-stat-label">Active Issues</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-icon">✅</div>
+    <div class="admin-stat-num" id="returned-issues-count">—</div>
+    <div class="admin-stat-label">Returned Books</div>
+  </div>
+</div>
+
+<!-- Search Bar -->
+<div class="glass-card reveal" style="padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;">
+  <span style="font-size:1.1rem;color:rgba(248,113,113,0.5);">🔍</span>
+  <input
+    type="text"
+    id="issue-search"
+    placeholder="Search by student name, book title, or status..."
+    class="form-control"
+    style="border:none;background:transparent;padding:0.4rem 0;font-size:0.95rem;box-shadow:none;"
+  />
+</div>
+
+<!-- Issues Table -->
+<div class="glass-card reveal" style="padding:0;overflow:hidden;">
+  <div class="table-wrap">
+    <table class="data-table" id="issues-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student</th>
+          <th>Book Title</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+          <th>Return Date</th>
+          <th>Status</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for issue in issues %}
+        <tr class="issue-row" data-search="{{ issue.student.name|lower }} {{ issue.book.title|lower }} {{ issue.status|lower }}">
+          <td style="color:rgba(248,113,113,0.4);font-size:0.8rem;">{{ forloop.counter }}</td>
+          <td>
+            <div style="font-weight:500;color:var(--text-primary);font-size:0.95rem;">{{ issue.student.name }}</div>
+            <div style="font-size:0.75rem;color:rgba(248,113,113,0.5);">{{ issue.student.email }}</div>
+          </td>
+          <td>
+            <div style="color:var(--text-primary);font-weight:500;">{{ issue.book.title }}</div>
+            <div style="font-size:0.75rem;color:var(--text-secondary);">by {{ issue.book.author }}</div>
+          </td>
+          <td style="color:var(--text-secondary);">{{ issue.issue_date }}</td>
+          <td style="color:var(--text-secondary);">{{ issue.due_date|default:"N/A" }}</td>
+          <td style="color:var(--text-secondary);">{{ issue.return_date|default:"—" }}</td>
+          <td>
+            {% if issue.status == 'Issued' %}
+              <span class="badge badge-red">● Active</span>
+            {% else %}
+              <span class="badge badge-green">✓ Returned</span>
+            {% endif %}
+          </td>
+          <td style="text-align:right;">
+            {% if issue.status == 'Issued' %}
+              <a href="{% url 'transactions:return_book' issue.pk %}" class="action-btn action-btn-edit" id="return-issue-{{ issue.pk }}">
+                ↩ Mark Returned
+              </a>
+            {% else %}
+              <span style="font-size:0.8rem;color:rgba(248,113,113,0.3);">Completed</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align:center;padding:4rem;color:rgba(248,113,113,0.3);">
+            <div style="font-size:2rem;margin-bottom:0.8rem;">📭</div>
+            <div style="font-size:0.9rem;">No book issues or checkouts recorded.</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Live search filter
+document.getElementById('issue-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.issue-row').forEach(row => {
+    const text = row.dataset.search || '';
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+});
+
+// Compute active/returned stats
+document.addEventListener('DOMContentLoaded', () => {
+  let activeCount = 0, returnedCount = 0;
+  {% for issue in issues %}
+    {% if issue.status == 'Issued' %}
+      activeCount++;
+    {% else %}
+      returnedCount++;
+    {% endif %}
+  {% endfor %}
+  const ac = document.getElementById('active-issues-count');
+  const rc = document.getElementById('returned-issues-count');
+  if(ac) ac.textContent = activeCount;
+  if(rc) rc.textContent = returnedCount;
+});
+</script>
+{% endblock %}

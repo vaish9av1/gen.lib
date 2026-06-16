@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - {{ book.title }}{% endblock %}
+
+{% block nav %}
+  <nav class="nav" id="main-nav">
+    <div class="container nav-inner">
+      <a href="{% url 'home' %}" class="nav-logo">gen.lib</a>
+      <ul class="nav-links">
+        <li><a href="{% url 'books:book_browse' %}">Browse Books</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'accounts:logout' %}" class="nav-cta">Sign Out</a></li>
+        {% else %}
+          <li><a href="{% url 'accounts:login' %}" class="nav-cta">Sign In</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 6rem 0; display:flex; justify-content:center;">
+  <div class="glass-card reveal" style="max-width:600px; width:100%; padding:2.5rem;">
+    
+    <div style="text-align:center; margin-bottom:2rem;">
+      <h1 style="font-family:'Playfair Display', serif; font-size:2rem; color:#fff; margin-bottom:0.5rem;">Confirm Checkout</h1>
+      <p style="color:rgba(255,255,255,0.6);">You are about to borrow the following book.</p>
+    </div>
+
+    <div style="display:flex; gap:1.5rem; background:rgba(255,255,255,0.02); padding:1.5rem; border-radius:12px; border:1px solid rgba(255,255,255,0.05); margin-bottom:2rem;">
+      <div style="width:100px; aspect-ratio:2/3; background:rgba(0,0,0,0.3); border-radius:8px; overflow:hidden;">
+        {% if book.cover_image %}
+          <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width:100%; height:100%; object-fit:cover;" />
+        {% else %}
+          <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.3); font-size:1.5rem;">📚</div>
+        {% endif %}
+      </div>
+      <div style="display:flex; flex-direction:column; justify-content:center;">
+        <h3 style="font-size:1.25rem; font-weight:600; color:#fff; margin-bottom:0.25rem;">{{ book.title }}</h3>
+        <p style="color:rgba(255,255,255,0.6); margin-bottom:0.5rem;">by {{ book.author }}</p>
+        <span style="font-size:0.85rem; padding:0.25rem 0.5rem; background:rgba(167,243,208,0.1); color:#a7f3d0; border-radius:4px; display:inline-block; width:fit-content;">{{ book.available_quantity }} Copies Available</span>
+      </div>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div style="display:flex; gap:1rem;">
+        <button type="submit" class="btn-primary" style="flex:1; justify-content:center;">Confirm Checkout</button>
+        <a href="{% url 'books:book_browse' %}" class="btn-ghost" style="flex:1; justify-content:center;">Cancel</a>
+      </div>
+    </form>
+    
+  </div>
+</div>
+{% endblock %}
