@@ -3,7 +3,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import LoginForm, OTPVerifyForm
+from django.contrib import messages
+from django.contrib.auth.models import User
+from students.models import Student
+from .forms import LoginForm, OTPVerifyForm, UserSignUpForm
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -19,7 +22,7 @@ def login_view(request):
             if user is not None:
                 otp = str(random.randint(100000, 999999))
                 
-                # 1. SAVE BOTH TO THE SECURE DATABASE SESSION 
+                # Save both to the secure database session backend
                 request.session['pre_2fa_user_id'] = user.id
                 request.session['active_otp_code'] = otp
                 
@@ -28,18 +31,17 @@ def login_view(request):
                 message = f"Hello {user.username},\n\nYour OTP for logging into gen.lib is: {otp}\n\nThis OTP is valid for 5 minutes."
                 
                 try:
+                    # Setting fail_silently=True ensures that even if Google blocks Render's IP,
+                    # the site won't throw a 500/timeout error. It will gracefully push the user to the OTP page.
                     send_mail(
                         subject,
                         message,
                         settings.DEFAULT_FROM_EMAIL,
                         [user.email],
-                        fail_silently=False,
+                        fail_silently=True,
                     )
                 except Exception as e:
-                    print(f"SMTP Error encountered: {e}")
-                    # fail_silently=False will cause a crash if your SMTP credentials are bad.
-                    # If you want the site to keep moving forward even if Gmail blocks Render:
-                    # error_message = "Email delivery failed. Please check backend configurations."
+                    print(f"SMTP Logging error: {e}")
                 
                 return redirect('accounts:otp_verify')
             else:
@@ -49,7 +51,7 @@ def login_view(request):
 
 def otp_verify_view(request):
     user_id = request.session.get('pre_2fa_user_id')
-    cached_otp = request.session.get('active_otp_code') # Pull cleanly from session storage
+    cached_otp = request.session.get('active_otp_code')
 
     if not user_id or not cached_otp:
         return redirect('accounts:login')
@@ -62,7 +64,6 @@ def otp_verify_view(request):
             entered_otp = form.cleaned_data.get('otp')
             
             if cached_otp and str(entered_otp) == str(cached_otp):
-                from django.contrib.auth.models import User
                 try:
                     user = User.objects.get(id=user_id)
                     login(request, user)
@@ -81,3 +82,43 @@ def otp_verify_view(request):
                 error_message = "Invalid or expired OTP."
 
     return render(request, 'accounts/otp_verify.html', {'form': form, 'error': error_message})
+
+def logout_view(request):
+    logout(request)
+    return redirect('accounts:login')
+
+def signup_view(request):
+    form = UserSignUpForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            name = form.cleaned_data.get('name')
+            email = form.cleaned_data.get('email')
+            phone = form.cleaned_data.get('phone')
+            password = form.cleaned_data.get('password')
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+
+            try:
+                student = Student.objects.get(user=user)
+                student.name = name
+                student.email = email
+                student.phone = phone
+                student.save()
+            except Student.DoesNotExist:
+                Student.objects.create(
+                    user=user,
+                    name=name,
+                    email=email,
+                    phone=phone
+                )
+
+            login(request, user)
+            messages.success(request, f"Welcome to gen.lib, {name}! Your account has been registered successfully.")
+            return redirect('home')
+
+    return render(request, 'accounts/signup.html', {'form': form})
