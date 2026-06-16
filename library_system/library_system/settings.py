@@ -11,8 +11,8 @@ env = environ.Env(
     DEBUG=(bool, False)
 )
 environ.Env.read_env(BASE_DIR / '.env')
-if os.path.exists(env):
-    environ.Env.read_env(env)
+if os.path.exists(env_file):
+    environ.Env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
