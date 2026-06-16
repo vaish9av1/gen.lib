@@ -1,12 +1,15 @@
 import random
+import resend
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from students.models import Student
 from .forms import LoginForm, OTPVerifyForm, UserSignUpForm
+
+# Hardcode the API key directly as a string so it initializes instantly
+resend.api_key = "re_6S88hkd3_AQUpJeWnQnC7K7RYRVCU9p7g"
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -26,22 +29,29 @@ def login_view(request):
                 request.session['pre_2fa_user_id'] = user.id
                 request.session['active_otp_code'] = otp
                 
-                # Send email
-                subject = "Your gen.lib Login OTP"
-                message = f"Hello {user.username},\n\nYour OTP for logging into gen.lib is: {otp}\n\nThis OTP is valid for 5 minutes."
-                
+                # ----------------------------------------------------------------
+                # RESEND API DELIVERY (Bypasses Render's port restrictions completely)
+                # ----------------------------------------------------------------
                 try:
-                    # Setting fail_silently=True ensures that even if Google blocks Render's IP,
-                    # the site won't throw a 500/timeout error. It will gracefully push the user to the OTP page.
-                    send_mail(
-                        subject,
-                        message,
-                        settings.DEFAULT_FROM_EMAIL,
-                        [user.email],
-                        fail_silently=True,
-                    )
+                    resend.Emails.send({
+                        "from": "onboarding@resend.dev",
+                        "to": user.email, # Make sure your user account has a real email address!
+                        "subject": "Your gen.lib Login OTP",
+                        "html": f"""
+                            <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
+                                <h2 style="color: #333;">Your gen.lib Security Code</h2>
+                                <p>Hello <strong>{user.username}</strong>,</p>
+                                <p>Your OTP for logging into the Library System is:</p>
+                                <div style="font-size: 24px; font-weight: bold; padding: 10px 20px; background-color: #f4f4f4; display: inline-block; letter-spacing: 2px; color: #007bff; border-radius: 4px;">
+                                    {otp}
+                                </div>
+                                <p style="color: #666; font-size: 12px; margin-top: 20px;">This OTP is valid for 5 minutes. If you did not request this code, please secure your account credentials.</p>
+                            </div>
+                        """
+                    })
                 except Exception as e:
-                    print(f"SMTP Logging error: {e}")
+                    print(f"Resend Send Error: {e}")
+                # ----------------------------------------------------------------
                 
                 return redirect('accounts:otp_verify')
             else:
