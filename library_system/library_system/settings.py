@@ -1,5 +1,6 @@
 import environ
 import os
+import dj_database_url
 from pathlib import Path
 
 
@@ -74,15 +75,21 @@ WSGI_APPLICATION = 'library_system.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': env('DB_NAME'),
+    #     'USER': env('DB_USER'),
+    #     'PASSWORD': env('DB_PASSWORD'),
+    #     'HOST': env('DB_HOST'),
+    #     'PORT': env('DB_PORT'),
+    # }
+    'default': dj_database_url.config(
+        # If DATABASE_URL variable exists (on Render), it uses that.
+        # If it doesn't exist (on your PC), it falls back to your local MySQL settings below:
+        default='mysql://root:1991@127.0.0.1:3306/library_db'
+    )
 }
+
 
 
 # Password validation
